@@ -24,7 +24,19 @@ jobs:
         context: .
         file: ./docker/Dockerfile.user
         push: true
-        tags: dilrajsp/week-18-class:latest  # Replace with your Docker Hub username and repository
+        tags: dilrajsp/week-18-class:latest
 
     - name: Verify Pushed Image
-      run: docker pull dilrajsp/week-18-class:latest  # Replace with your Docker Hub username and repository
+      run: docker pull dilrajsp/week-18-class:latest
+
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          sudo docker pull dilrajsp/week-18-class:latest
+          sudo docker stop web-app || true
+          sudo docker rm web-app || true
+          sudo docker run -e DATABASE_URL ${{ secrets.DB_URL }} --restart on-failure -d --name web-app -p 3005:3000 dilrajsp/week-18-class:latest
