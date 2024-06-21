@@ -39,5 +39,4 @@ jobs:
           sudo docker pull dilrajsp/week-18-class:latest
           sudo docker stop web-app || true
           sudo docker rm web-app || true
-          sudo docker run --rm -e DATABASE_URL=${{ secrets.DB_URL }} dilrajsp/week-18-class:latest npx prisma migrate deploy
           sudo docker run -e DATABASE_URL=${{ secrets.DB_URL }} --restart on-failure -d --name web-app -p 3001:3000 dilrajsp/week-18-class:latest
